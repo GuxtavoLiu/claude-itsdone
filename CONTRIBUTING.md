@@ -1,4 +1,4 @@
-# Contributing to claude-bell
+# Contributing to claude-itsdone
 
 Thank you for your interest in contributing! This guide will help you get started.
 
@@ -7,8 +7,8 @@ Thank you for your interest in contributing! This guide will help you get starte
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/<your-username>/claude-bell.git
-   cd claude-bell
+   git clone https://github.com/<your-username>/claude-itsdone.git
+   cd claude-itsdone
    ```
 3. Install locally for development:
    ```bash
@@ -22,8 +22,8 @@ This project has **zero dependencies** — please keep it that way. Use only Nod
 ### Project Structure
 
 ```
-claude-bell/
-├── bin/claude-bell.js    # CLI entry point
+claude-itsdone/
+├── bin/claude-itsdone.js    # CLI entry point
 ├── src/
 │   ├── index.js          # Public API
 │   ├── sound.js          # Cross-platform sound playback
@@ -37,10 +37,10 @@ claude-bell/
 
 ```bash
 # Test the notification sound
-claude-bell test
+claude-itsdone test
 
 # Check status
-claude-bell status
+claude-itsdone status
 ```
 
 ## Submitting Changes
@@ -75,7 +75,7 @@ Use a short prefix to categorize your commit:
 
 ## Reporting Bugs
 
-Open an [issue](https://github.com/GuxtavoLiu/claude-bell/issues) with:
+Open an [issue](https://github.com/GuxtavoLiu/claude-itsdone/issues) with:
 
 - Your OS and version
 - Node.js version (`node --version`)

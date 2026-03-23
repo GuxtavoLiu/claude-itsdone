@@ -1,8 +1,8 @@
-# claude-bell
+# claude-itsdone
 
 Sound notifications for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — never miss when it needs your attention.
 
-`claude-bell` plays a short sound alert whenever Claude Code enters a **waiting-for-human-action** state (e.g., asking you to approve a file edit, confirm a command, or answer a question). No more staring at the terminal waiting.
+`claude-itsdone` plays a short sound alert whenever Claude Code enters a **waiting-for-human-action** state (e.g., asking you to approve a file edit, confirm a command, or answer a question). No more staring at the terminal waiting.
 
 ## Features
 
@@ -10,19 +10,19 @@ Sound notifications for [Claude Code](https://docs.anthropic.com/en/docs/claude-
 - **Cross-platform** — Windows, macOS, and Linux
 - **Multiple presets** — choose from `default`, `gentle`, `urgent`, `chime`, or `pulse`
 - **Custom sounds** — use your own `.wav` file
-- **One-command setup** — `claude-bell install` and you're done
+- **One-command setup** — `claude-itsdone install` and you're done
 - **Non-intrusive** — if sound playback fails, it never interrupts your workflow
 
 ## Installation
 
 ```bash
-npm install -g claude-bell
+npm install -g claude-itsdone
 ```
 
 Then hook it into Claude Code:
 
 ```bash
-claude-bell install
+claude-itsdone install
 ```
 
 That's it. Claude Code will now play a sound whenever it needs you.
@@ -31,16 +31,16 @@ That's it. Claude Code will now play a sound whenever it needs you.
 
 ```bash
 # Install the hook into Claude Code
-claude-bell install
+claude-itsdone install
 
 # Preview the current notification sound
-claude-bell test
+claude-itsdone test
 
 # Check installation and config status
-claude-bell status
+claude-itsdone status
 
 # Remove the hook from Claude Code
-claude-bell uninstall
+claude-itsdone uninstall
 ```
 
 ## Configuration
@@ -50,7 +50,7 @@ claude-bell uninstall
 Switch between built-in sound presets:
 
 ```bash
-claude-bell preset <name>
+claude-itsdone preset <name>
 ```
 
 | Preset    | Description                          |
@@ -63,8 +63,8 @@ claude-bell preset <name>
 
 ```bash
 # Example
-claude-bell preset chime
-claude-bell test
+claude-itsdone preset chime
+claude-itsdone test
 ```
 
 ### Custom sound file
@@ -72,8 +72,8 @@ claude-bell test
 Use any `.wav` file as your notification sound:
 
 ```bash
-claude-bell sound /path/to/your/sound.wav
-claude-bell test
+claude-itsdone sound /path/to/your/sound.wav
+claude-itsdone test
 ```
 
 ### Reset
@@ -81,12 +81,12 @@ claude-bell test
 Restore default settings:
 
 ```bash
-claude-bell reset
+claude-itsdone reset
 ```
 
 ## How it works
 
-`claude-bell install` adds a [hook](https://docs.anthropic.com/en/docs/claude-code/hooks) to your Claude Code settings (`~/.claude/settings.json`):
+`claude-itsdone install` adds a [hook](https://docs.anthropic.com/en/docs/claude-code/hooks) to your Claude Code settings (`~/.claude/settings.json`):
 
 ```json
 {
@@ -97,7 +97,7 @@ claude-bell reset
         "hooks": [
           {
             "type": "command",
-            "command": "claude-bell notify"
+            "command": "claude-itsdone notify"
           }
         ]
       }
@@ -106,7 +106,7 @@ claude-bell reset
 }
 ```
 
-When Claude Code fires a `Notification` event (waiting for human input), it runs `claude-bell notify`, which plays the configured sound.
+When Claude Code fires a `Notification` event (waiting for human input), it runs `claude-itsdone notify`, which plays the configured sound.
 
 ### Sound playback by platform
 
@@ -119,8 +119,8 @@ When Claude Code fires a `Notification` event (waiting for human input), it runs
 ## Uninstalling
 
 ```bash
-claude-bell uninstall
-npm uninstall -g claude-bell
+claude-itsdone uninstall
+npm uninstall -g claude-itsdone
 ```
 
 ## Contributing

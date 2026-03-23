@@ -3,10 +3,10 @@ const path = require("path");
 const os = require("os");
 
 const CLAUDE_SETTINGS_PATH = path.join(os.homedir(), ".claude", "settings.json");
-const HOOK_MARKER = "claude-bell";
+const HOOK_MARKER = "claude-itsdone";
 
 function getHookCommand() {
-  return `claude-bell notify`;
+  return `claude-itsdone notify`;
 }
 
 function readSettings() {
@@ -36,7 +36,7 @@ function isInstalled() {
 
 function install() {
   if (isInstalled()) {
-    return { success: false, message: "claude-bell is already installed." };
+    return { success: false, message: "claude-itsdone is already installed." };
   }
 
   const settings = readSettings();
@@ -63,13 +63,13 @@ function install() {
 
   return {
     success: true,
-    message: `claude-bell installed successfully.\nHook added to: ${CLAUDE_SETTINGS_PATH}`,
+    message: `claude-itsdone installed successfully.\nHook added to: ${CLAUDE_SETTINGS_PATH}`,
   };
 }
 
 function uninstall() {
   if (!isInstalled()) {
-    return { success: false, message: "claude-bell is not installed." };
+    return { success: false, message: "claude-itsdone is not installed." };
   }
 
   const settings = readSettings();
@@ -92,7 +92,7 @@ function uninstall() {
 
   return {
     success: true,
-    message: `claude-bell uninstalled successfully.\nHook removed from: ${CLAUDE_SETTINGS_PATH}`,
+    message: `claude-itsdone uninstalled successfully.\nHook removed from: ${CLAUDE_SETTINGS_PATH}`,
   };
 }
 

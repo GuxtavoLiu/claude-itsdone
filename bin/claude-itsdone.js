@@ -9,10 +9,10 @@ const command = args[0];
 
 function printHelp() {
   console.log(`
-  claude-bell - Sound notifications for Claude Code
+  claude-itsdone - Sound notifications for Claude Code
 
   Usage:
-    claude-bell <command> [options]
+    claude-itsdone <command> [options]
 
   Commands:
     install       Add notification hook to Claude Code settings
@@ -28,10 +28,10 @@ function printHelp() {
     ${getPresetNames().join(", ")}
 
   Examples:
-    claude-bell install          # Set up the hook
-    claude-bell preset chime     # Use the chime preset
-    claude-bell sound ~/ding.wav # Use a custom sound file
-    claude-bell test             # Preview the sound
+    claude-itsdone install          # Set up the hook
+    claude-itsdone preset chime     # Use the chime preset
+    claude-itsdone sound ~/ding.wav # Use a custom sound file
+    claude-itsdone test             # Preview the sound
 `);
 }
 
@@ -39,7 +39,7 @@ function cmdInstall() {
   const result = installer.install();
   console.log(result.message);
   if (result.success) {
-    console.log('\nRun "claude-bell test" to preview the notification sound.');
+    console.log('\nRun "claude-itsdone test" to preview the notification sound.');
   }
   process.exit(result.success ? 0 : 1);
 }
@@ -67,7 +67,7 @@ function cmdStatus() {
   const installed = installer.isInstalled();
   const cfg = config.load();
 
-  console.log(`\n  claude-bell status\n`);
+  console.log(`\n  claude-itsdone status\n`);
   console.log(`  Installed:    ${installed ? "yes" : "no"}`);
   console.log(`  Preset:       ${cfg.preset || "default"}`);
   console.log(`  Custom file:  ${cfg.soundFile || "(none)"}`);
@@ -97,7 +97,7 @@ function cmdPreset() {
   cfg.soundFile = null;
   config.save(cfg);
   console.log(`Preset set to "${name}".`);
-  console.log('Run "claude-bell test" to preview.');
+  console.log('Run "claude-itsdone test" to preview.');
 }
 
 function cmdSound() {
@@ -105,7 +105,7 @@ function cmdSound() {
 
   if (!filePath) {
     console.error("Please provide a path to a sound file.");
-    console.error('Example: claude-bell sound ~/ding.wav');
+    console.error('Example: claude-itsdone sound ~/ding.wav');
     process.exit(1);
   }
 
@@ -122,7 +122,7 @@ function cmdSound() {
   cfg.soundFile = resolved;
   config.save(cfg);
   console.log(`Custom sound set to: ${resolved}`);
-  console.log('Run "claude-bell test" to preview.');
+  console.log('Run "claude-itsdone test" to preview.');
 }
 
 function cmdReset() {
