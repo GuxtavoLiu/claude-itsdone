@@ -1,0 +1,38 @@
+{
+  "name": "claude-bell",
+  "version": "1.0.0",
+  "description": "Sound notifications for Claude Code — get alerted when human action is needed",
+  "main": "src/index.js",
+  "bin": {
+    "claude-bell": "./bin/claude-bell.js"
+  },
+  "scripts": {
+    "test": "node bin/claude-bell.js test"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "notification",
+    "sound",
+    "bell",
+    "alert",
+    "cli",
+    "hooks"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "sounds/",
+    "README.md",
+    "LICENSE"
+  ]
+}
