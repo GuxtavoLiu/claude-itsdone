@@ -53,10 +53,12 @@ function getPresetNames() {
 }
 
 function buildBeepCommand(frequency, duration) {
+  const freq = Math.max(37, Math.min(32767, Math.round(Number(frequency) || 800)));
+  const dur = Math.max(1, Math.min(10000, Math.round(Number(duration) || 300)));
   const platform = os.platform();
 
   if (platform === "win32") {
-    return `powershell -NoProfile -c "[Console]::Beep(${frequency}, ${duration})"`;
+    return `powershell -NoProfile -c "[Console]::Beep(${freq}, ${dur})"`;
   } else if (platform === "darwin") {
     return `osascript -e 'do shell script "afplay /System/Library/Sounds/Tink.aiff 2>/dev/null"' 2>/dev/null || printf '\\a'`;
   } else {
@@ -130,6 +132,8 @@ function getCommand(config) {
   } else if (preset.type === "melody") {
     return buildMelodyCommand(preset.params.notes);
   }
+
+  return buildBeepCommand(800, 300);
 }
 
 function play(config = {}) {

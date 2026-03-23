@@ -118,6 +118,15 @@ function cmdSound() {
     process.exit(1);
   }
 
+  if (/[`$\\!";&|<>(){}\r\n]/.test(resolved) && process.platform !== "win32") {
+    console.error("File path contains unsafe characters.");
+    process.exit(1);
+  }
+  if (/[`$";&|<>(){}\r\n]/.test(resolved) && process.platform === "win32") {
+    console.error("File path contains unsafe characters.");
+    process.exit(1);
+  }
+
   const cfg = config.load();
   cfg.soundFile = resolved;
   config.save(cfg);
