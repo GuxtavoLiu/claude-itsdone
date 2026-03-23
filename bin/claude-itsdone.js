@@ -47,7 +47,7 @@ function cmdInstall() {
 function cmdUninstall() {
   const result = installer.uninstall();
   console.log(result.message);
-  process.exit(result.success ? 0 : 1);
+  process.exit(0);
 }
 
 function cmdTest() {
