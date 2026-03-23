@@ -71,11 +71,13 @@ function buildMelodyCommand(notes) {
 
   if (platform === "win32") {
     const beeps = notes
-      .map((n) =>
-        n.frequency > 0
-          ? `[Console]::Beep(${n.frequency}, ${n.duration})`
-          : `Start-Sleep -Milliseconds ${n.duration}`
-      )
+      .map((n) => {
+        const freq = Math.max(37, Math.min(32767, Math.round(Number(n.frequency) || 0)));
+        const dur = Math.max(1, Math.min(10000, Math.round(Number(n.duration) || 100)));
+        return freq > 0
+          ? `[Console]::Beep(${freq}, ${dur})`
+          : `Start-Sleep -Milliseconds ${dur}`;
+      })
       .join("; ");
     return `powershell -NoProfile -c "${beeps}"`;
   } else if (platform === "darwin") {
@@ -123,7 +125,6 @@ function getCommand(config) {
   const preset = PRESETS[presetName];
 
   if (!preset) {
-    console.error(`Unknown preset: "${presetName}". Using "default".`);
     return buildBeepCommand(800, 300);
   }
 
@@ -154,4 +155,4 @@ function playAsync(config = {}) {
   }
 }
 
-module.exports = { play, playAsync, getCommand, getPresetNames, PRESETS };
+module.exports = { play, playAsync, getCommand, getPresetNames, PRESETS, sanitizePath };

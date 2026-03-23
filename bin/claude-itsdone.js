@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { play, getPresetNames } = require("../src/sound");
+const { play, getPresetNames, sanitizePath } = require("../src/sound");
 const config = require("../src/config");
 const installer = require("../src/installer");
 
@@ -118,11 +118,7 @@ function cmdSound() {
     process.exit(1);
   }
 
-  if (/[`$\\!";&|<>(){}\r\n]/.test(resolved) && process.platform !== "win32") {
-    console.error("File path contains unsafe characters.");
-    process.exit(1);
-  }
-  if (/[`$";&|<>(){}\r\n]/.test(resolved) && process.platform === "win32") {
+  if (!sanitizePath(resolved)) {
     console.error("File path contains unsafe characters.");
     process.exit(1);
   }
@@ -163,6 +159,11 @@ switch (command) {
     break;
   case "reset":
     cmdReset();
+    break;
+  case "version":
+  case "--version":
+  case "-v":
+    console.log(require("../package.json").version);
     break;
   case "help":
   case "--help":
