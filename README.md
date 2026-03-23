@@ -125,7 +125,9 @@ npm uninstall -g claude-bell
 
 ## Contributing
 
-Contributions are welcome! Some ideas:
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request.
+
+Some ideas for contributions:
 
 - Add new sound presets
 - Improve Linux/macOS sound generation (e.g., `sox` tone synthesis)
@@ -135,4 +137,4 @@ Contributions are welcome! Some ideas:
 
 ## License
 
-MIT
+[MIT](LICENSE) — Gustavo Liu

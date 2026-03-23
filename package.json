@@ -19,12 +19,16 @@
     "cli",
     "hooks"
   ],
-  "author": "",
+  "author": "Gustavo Liu <g.liu@nextage.com.br> (https://github.com/GuxtavoLiu)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/GuxtavoLiu/claude-bell.git"
   },
+  "bugs": {
+    "url": "https://github.com/GuxtavoLiu/claude-bell/issues"
+  },
+  "homepage": "https://github.com/GuxtavoLiu/claude-bell#readme",
   "engines": {
     "node": ">=16.0.0"
   },
