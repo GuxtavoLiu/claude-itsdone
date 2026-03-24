@@ -1,6 +1,6 @@
 {
   "name": "claude-itsdone",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Sound notifications for Claude Code — get alerted when human action is needed",
   "main": "src/index.js",
   "bin": {
