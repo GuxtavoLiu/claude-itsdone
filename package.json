@@ -4,7 +4,7 @@
   "description": "Sound notifications for Claude Code — get alerted when human action is needed",
   "main": "src/index.js",
   "bin": {
-    "claude-itsdone": "./bin/claude-itsdone.js"
+    "claude-itsdone": "bin/claude-itsdone.js"
   },
   "scripts": {
     "test": "node bin/claude-itsdone.js test"
