@@ -46,6 +46,58 @@ const PRESETS = {
       ],
     },
   },
+  coin: {
+    type: "melody",
+    params: {
+      notes: [
+        { frequency: 988, duration: 80 },
+        { frequency: 1319, duration: 120 },
+      ],
+    },
+  },
+  levelup: {
+    type: "melody",
+    params: {
+      notes: [
+        { frequency: 523, duration: 80 },
+        { frequency: 659, duration: 80 },
+        { frequency: 784, duration: 80 },
+        { frequency: 1047, duration: 80 },
+        { frequency: 1319, duration: 150 },
+      ],
+    },
+  },
+  doorbell: {
+    type: "melody",
+    params: {
+      notes: [
+        { frequency: 659, duration: 250 },
+        { frequency: 523, duration: 350 },
+      ],
+    },
+  },
+  alert: {
+    type: "melody",
+    params: {
+      notes: [
+        { frequency: 1000, duration: 100 },
+        { frequency: 0, duration: 60 },
+        { frequency: 1000, duration: 100 },
+        { frequency: 0, duration: 60 },
+        { frequency: 1000, duration: 100 },
+      ],
+    },
+  },
+  whistle: {
+    type: "melody",
+    params: {
+      notes: [
+        { frequency: 1200, duration: 150 },
+        { frequency: 900, duration: 150 },
+        { frequency: 600, duration: 200 },
+      ],
+    },
+  },
 };
 
 function getPresetNames() {

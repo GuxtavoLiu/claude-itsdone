@@ -53,13 +53,18 @@ Switch between built-in sound presets:
 claude-itsdone preset <name>
 ```
 
-| Preset    | Description                          |
-|-----------|--------------------------------------|
-| `default` | Single beep (800Hz, 300ms)           |
-| `gentle`  | Softer, shorter beep (600Hz, 200ms)  |
-| `urgent`  | Rising three-tone melody             |
-| `chime`   | Musical C-E-G chord progression      |
-| `pulse`   | Two quick pulses                     |
+| Preset     | Description                          |
+|------------|--------------------------------------|
+| `default`  | Single beep (800Hz, 300ms)           |
+| `gentle`   | Softer, shorter beep (600Hz, 200ms)  |
+| `urgent`   | Rising three-tone melody             |
+| `chime`    | Musical C-E-G chord progression      |
+| `pulse`    | Two quick pulses                     |
+| `coin`     | Quick double high-pitched bling      |
+| `levelup`  | Fast ascending 5-note fanfare        |
+| `doorbell` | Classic ding-dong                    |
+| `alert`    | Three firm beeps                     |
+| `whistle`  | Descending three-tone slide          |
 
 ```bash
 # Example
