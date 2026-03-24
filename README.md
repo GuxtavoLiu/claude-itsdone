@@ -135,6 +135,32 @@ Some ideas for contributions:
 - Add a `--quiet-hours` feature
 - Package bundled `.wav` files for consistent cross-platform sounds
 
+## FAQ
+
+**Does it work on every project or just the one where I installed it?**
+It works globally. The hook is added to `~/.claude/settings.json` (user-level), so every Claude Code session on your machine will play sounds.
+
+**I don't hear any sound. What's wrong?**
+Run `claude-itsdone test` to check. On Linux, make sure `paplay` or `aplay` is installed. On macOS, the system sound files must be present at `/System/Library/Sounds/`. On Windows, PowerShell must be available.
+
+**Will it break my workflow if something goes wrong?**
+No. Sound playback is wrapped in silent try/catch blocks. If anything fails, it fails quietly — Claude Code keeps working normally.
+
+**Can I use it with other audio formats besides `.wav`?**
+It depends on your platform. On macOS, `afplay` supports `.aiff`, `.mp3`, `.wav`, and more. On Linux, `paplay` handles `.ogg`, `.wav`, and others. On Windows, only `.wav` is supported via `SoundPlayer`.
+
+**Do the presets sound different on macOS and Linux?**
+On Windows, each preset has distinct frequencies and melodies. On macOS and Linux, presets use system sounds — beep presets play one sound, melody presets play multiple sounds in sequence. The experience varies by platform.
+
+**How do I update to a new version?**
+```bash
+npm update -g claude-itsdone
+```
+No need to reinstall the hook — it stays in your settings.
+
+**Does it conflict with other Claude Code hooks?**
+No. It only adds its own entry to the `Notification` hook array. Existing hooks are preserved during install and uninstall.
+
 ## License
 
 [MIT](LICENSE) — Gustavo Liu
