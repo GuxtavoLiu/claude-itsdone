@@ -1,9 +1,10 @@
-const { play, playAsync, getPresetNames, PRESETS } = require("./sound");
+const { play, playDetached, playAsync, getPresetNames, PRESETS } = require("./sound");
 const { load, save, getConfigPath, DEFAULT_CONFIG } = require("./config");
-const { install, uninstall, isInstalled } = require("./installer");
+const { install, uninstall, isInstalled, installedEvents } = require("./installer");
 
 module.exports = {
   play,
+  playDetached,
   playAsync,
   getPresetNames,
   PRESETS,
@@ -14,4 +15,5 @@ module.exports = {
   install,
   uninstall,
   isInstalled,
+  installedEvents,
 };

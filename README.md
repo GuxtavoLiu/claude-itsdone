@@ -4,6 +4,14 @@ Sound notifications for [Claude Code](https://docs.anthropic.com/en/docs/claude-
 
 `claude-itsdone` plays a short sound alert whenever Claude Code enters a **waiting-for-human-action** state (e.g., asking you to approve a file edit, confirm a command, or answer a question). No more staring at the terminal waiting.
 
+## TL;DR
+
+Paste this into Claude Code and you're set:
+
+```
+Run "npm install -g claude-itsdone && claude-itsdone install && claude-itsdone test" to set up sound notifications for when you need my attention.
+```
+
 ## Features
 
 - **Zero dependencies** — pure Node.js, nothing to install beyond the package itself
@@ -42,6 +50,16 @@ claude-itsdone status
 # Remove the hook from Claude Code
 claude-itsdone uninstall
 ```
+
+### Also play a sound when Claude finishes
+
+By default the sound plays when Claude Code is **waiting for you** (the `Notification` event). If you also want a sound when Claude **finishes responding** (the `Stop` event), install with:
+
+```bash
+claude-itsdone install --on-stop
+```
+
+Running it on top of an existing install just adds the extra event. `uninstall` removes both.
 
 ## Configuration
 
@@ -102,7 +120,7 @@ claude-itsdone reset
         "hooks": [
           {
             "type": "command",
-            "command": "claude-itsdone notify"
+            "command": "\"C:\\path\\to\\node.exe\" \"C:\\path\\to\\claude-itsdone\\bin\\claude-itsdone.js\" notify"
           }
         ]
       }
@@ -111,7 +129,9 @@ claude-itsdone reset
 }
 ```
 
-When Claude Code fires a `Notification` event (waiting for human input), it runs `claude-itsdone notify`, which plays the configured sound.
+When Claude Code fires a `Notification` event (waiting for human input), it runs `claude-itsdone notify`, which plays the configured sound. The hook command uses absolute paths to both Node.js and the script, so it works even when the package is not on the PATH of the environment Claude Code spawns hooks from. The sound is played by a detached process, so the hook itself returns immediately.
+
+Before any change, your current `settings.json` is copied to `settings.json.bak`. If the file exists but is not valid JSON, `install` and `uninstall` refuse to touch it.
 
 ### Sound playback by platform
 

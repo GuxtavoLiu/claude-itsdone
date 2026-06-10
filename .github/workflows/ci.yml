@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [18, 22]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Syntax check
+        run: |
+          node --check bin/claude-itsdone.js
+          node --check src/index.js
+          node --check src/sound.js
+          node --check src/config.js
+          node --check src/installer.js
+
+      - name: CLI smoke test
+        run: |
+          node bin/claude-itsdone.js --version
+          node bin/claude-itsdone.js status
+          node bin/claude-itsdone.js preset chime
+          node bin/claude-itsdone.js preset
+          node bin/claude-itsdone.js reset
+
+      - name: Install / uninstall round trip
+        run: |
+          node bin/claude-itsdone.js install
+          node bin/claude-itsdone.js status
+          node bin/claude-itsdone.js install --on-stop
+          node bin/claude-itsdone.js uninstall
+          node bin/claude-itsdone.js status
+
+      - name: Public API loads
+        run: node -e "const api = require('./src/index.js'); if (typeof api.play !== 'function' || typeof api.playDetached !== 'function') process.exit(1);"
+
+      - name: Corrupt settings.json is never overwritten
+        shell: bash
+        run: |
+          mkdir -p ~/.claude
+          echo '{ not json' > ~/.claude/settings.json
+          if node bin/claude-itsdone.js install; then
+            echo "install should have failed on corrupt settings" && exit 1
+          fi
+          grep -q 'not json' ~/.claude/settings.json
+          rm ~/.claude/settings.json

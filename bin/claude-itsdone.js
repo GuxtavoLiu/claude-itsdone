@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { play, getPresetNames, sanitizePath } = require("../src/sound");
+const { play, playDetached, getPresetNames, sanitizePath } = require("../src/sound");
 const config = require("../src/config");
 const installer = require("../src/installer");
 
@@ -16,6 +16,7 @@ function printHelp() {
 
   Commands:
     install       Add notification hook to Claude Code settings
+                  (--on-stop also plays when Claude finishes responding)
     uninstall     Remove notification hook from Claude Code settings
     test          Play a test sound with current settings
     notify        Play the notification (used internally by the hook)
@@ -29,6 +30,7 @@ function printHelp() {
 
   Examples:
     claude-itsdone install          # Set up the hook
+    claude-itsdone install --on-stop # Also notify when Claude finishes
     claude-itsdone preset chime     # Use the chime preset
     claude-itsdone sound ~/ding.wav # Use a custom sound file
     claude-itsdone test             # Preview the sound
@@ -36,7 +38,7 @@ function printHelp() {
 }
 
 function cmdInstall() {
-  const result = installer.install();
+  const result = installer.install({ onStop: args.includes("--on-stop") });
   console.log(result.message);
   if (result.success) {
     console.log('\nRun "claude-itsdone test" to preview the notification sound.');
@@ -47,7 +49,7 @@ function cmdInstall() {
 function cmdUninstall() {
   const result = installer.uninstall();
   console.log(result.message);
-  process.exit(0);
+  process.exit(result.success ? 0 : 1);
 }
 
 function cmdTest() {
@@ -60,15 +62,16 @@ function cmdTest() {
 
 function cmdNotify() {
   const cfg = config.load();
-  play(cfg);
+  // Detached so the hook returns immediately while the sound plays
+  playDetached(cfg);
 }
 
 function cmdStatus() {
-  const installed = installer.isInstalled();
+  const events = installer.installedEvents();
   const cfg = config.load();
 
   console.log(`\n  claude-itsdone status\n`);
-  console.log(`  Installed:    ${installed ? "yes" : "no"}`);
+  console.log(`  Installed:    ${events.length > 0 ? `yes (${events.join(", ")})` : "no"}`);
   console.log(`  Preset:       ${cfg.preset || "default"}`);
   console.log(`  Custom file:  ${cfg.soundFile || "(none)"}`);
   console.log(`  Config path:  ${config.getConfigPath()}`);
@@ -121,6 +124,11 @@ function cmdSound() {
   if (!sanitizePath(resolved)) {
     console.error("File path contains unsafe characters.");
     process.exit(1);
+  }
+
+  if (path.extname(resolved).toLowerCase() !== ".wav") {
+    console.warn("Warning: only .wav files are reliably supported on Windows (Media.SoundPlayer).");
+    console.warn("On macOS/Linux other formats may work depending on the player available.");
   }
 
   const cfg = config.load();

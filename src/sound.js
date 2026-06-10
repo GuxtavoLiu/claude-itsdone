@@ -1,16 +1,23 @@
-const { execSync, exec } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
 const path = require("path");
 const os = require("os");
 
 function sanitizePath(filePath) {
   const resolved = path.resolve(filePath);
-  if (/[`$\\!";&|<>(){}\r\n]/.test(resolved) && os.platform() !== "win32") {
-    return null;
-  }
-  if (/[`$";&|<>(){}\r\n]/.test(resolved) && os.platform() === "win32") {
+  // Quoting below handles everything else; reject only characters that can
+  // break across the quoting layers (and are invalid in Windows paths anyway).
+  if (/["\r\n\0]/.test(resolved)) {
     return null;
   }
   return resolved;
+}
+
+function quoteForPowershell(value) {
+  return "'" + value.replace(/'/g, "''") + "'";
+}
+
+function quoteForSh(value) {
+  return "'" + value.replace(/'/g, "'\\''") + "'";
 }
 
 const PRESETS = {
@@ -104,21 +111,36 @@ function getPresetNames() {
   return Object.keys(PRESETS);
 }
 
-function buildBeepCommand(frequency, duration) {
+function powershellSpec(script) {
+  return {
+    cmd: "powershell.exe",
+    args: ["-NoProfile", "-NonInteractive", "-Command", script],
+  };
+}
+
+function shSpec(script) {
+  return { cmd: "/bin/sh", args: ["-c", script] };
+}
+
+function buildBeepSpec(frequency, duration) {
   const freq = Math.max(37, Math.min(32767, Math.round(Number(frequency) || 800)));
   const dur = Math.max(1, Math.min(10000, Math.round(Number(duration) || 300)));
   const platform = os.platform();
 
   if (platform === "win32") {
-    return `powershell -NoProfile -c "[Console]::Beep(${freq}, ${dur})"`;
+    return powershellSpec(`[Console]::Beep(${freq}, ${dur})`);
   } else if (platform === "darwin") {
-    return `osascript -e 'do shell script "afplay /System/Library/Sounds/Tink.aiff 2>/dev/null"' 2>/dev/null || printf '\\a'`;
+    return shSpec(
+      `afplay /System/Library/Sounds/Tink.aiff 2>/dev/null || printf '\\a'`
+    );
   } else {
-    return `( command -v paplay >/dev/null 2>&1 && paplay /usr/share/sounds/freedesktop/stereo/message.oga 2>/dev/null ) || ( command -v aplay >/dev/null 2>&1 && aplay -q /usr/share/sounds/sound-icons/xylofon.wav 2>/dev/null ) || printf '\\a'`;
+    return shSpec(
+      `( command -v paplay >/dev/null 2>&1 && paplay /usr/share/sounds/freedesktop/stereo/message.oga 2>/dev/null ) || ( command -v aplay >/dev/null 2>&1 && aplay -q /usr/share/sounds/sound-icons/xylofon.wav 2>/dev/null ) || printf '\\a'`
+    );
   }
 }
 
-function buildMelodyCommand(notes) {
+function buildMelodySpec(notes) {
   const platform = os.platform();
 
   if (platform === "win32") {
@@ -131,80 +153,98 @@ function buildMelodyCommand(notes) {
           : `Start-Sleep -Milliseconds ${dur}`;
       })
       .join("; ");
-    return `powershell -NoProfile -c "${beeps}"`;
+    return powershellSpec(beeps);
   } else if (platform === "darwin") {
     const count = notes.filter((n) => n.frequency > 0).length;
     const cmds = [];
     for (let i = 0; i < count; i++) {
       cmds.push("afplay /System/Library/Sounds/Tink.aiff 2>/dev/null");
     }
-    return `osascript -e 'do shell script "${cmds.join(" && sleep 0.1 && ")}"' 2>/dev/null || printf '\\a'`;
+    return shSpec(`( ${cmds.join(" && sleep 0.1 && ")} ) || printf '\\a'`);
   } else {
     const count = notes.filter((n) => n.frequency > 0).length;
     const cmds = [];
     for (let i = 0; i < count; i++) {
       cmds.push("paplay /usr/share/sounds/freedesktop/stereo/message.oga 2>/dev/null");
     }
-    return `( command -v paplay >/dev/null 2>&1 && ${cmds.join(" && sleep 0.1 && ")} ) || printf '\\a'`;
+    return shSpec(
+      `( command -v paplay >/dev/null 2>&1 && ${cmds.join(" && sleep 0.1 && ")} ) || printf '\\a'`
+    );
   }
 }
 
-function buildCustomFileCommand(filePath) {
+function buildCustomFileSpec(filePath) {
   const platform = os.platform();
   const resolved = sanitizePath(filePath);
 
   if (!resolved) {
-    return platform === "win32"
-      ? `powershell -NoProfile -c "[Console]::Beep(800, 300)"`
-      : `printf '\\a'`;
+    return buildBeepSpec(800, 300);
   }
 
   if (platform === "win32") {
-    return `powershell -NoProfile -c "(New-Object Media.SoundPlayer '${resolved}').PlaySync()"`;
+    return powershellSpec(
+      `(New-Object Media.SoundPlayer ${quoteForPowershell(resolved)}).PlaySync()`
+    );
   } else if (platform === "darwin") {
-    return `afplay '${resolved}'`;
+    return shSpec(`afplay ${quoteForSh(resolved)}`);
   } else {
-    return `( command -v paplay >/dev/null 2>&1 && paplay '${resolved}' ) || ( command -v aplay >/dev/null 2>&1 && aplay -q '${resolved}' ) || printf '\\a'`;
+    const quoted = quoteForSh(resolved);
+    return shSpec(
+      `( command -v paplay >/dev/null 2>&1 && paplay ${quoted} ) || ( command -v aplay >/dev/null 2>&1 && aplay -q ${quoted} ) || printf '\\a'`
+    );
   }
 }
 
-function getCommand(config) {
+function getCommandSpec(config) {
   if (config.soundFile) {
-    return buildCustomFileCommand(config.soundFile);
+    return buildCustomFileSpec(config.soundFile);
   }
 
   const presetName = config.preset || "default";
   const preset = PRESETS[presetName];
 
   if (!preset) {
-    return buildBeepCommand(800, 300);
+    return buildBeepSpec(800, 300);
   }
 
   if (preset.type === "beep") {
-    return buildBeepCommand(preset.params.frequency, preset.params.duration);
+    return buildBeepSpec(preset.params.frequency, preset.params.duration);
   } else if (preset.type === "melody") {
-    return buildMelodyCommand(preset.params.notes);
+    return buildMelodySpec(preset.params.notes);
   }
 
-  return buildBeepCommand(800, 300);
+  return buildBeepSpec(800, 300);
 }
 
 function play(config = {}) {
-  const command = getCommand(config);
+  const { cmd, args } = getCommandSpec(config);
   try {
-    execSync(command, { stdio: "ignore", windowsHide: true });
+    spawnSync(cmd, args, { stdio: "ignore", windowsHide: true });
   } catch {
-    // Silently fail — a missing sound should never break the workflow
+    // Silently fail - a missing sound should never break the workflow
   }
 }
 
-function playAsync(config = {}) {
-  const command = getCommand(config);
+function playDetached(config = {}) {
+  const { cmd, args } = getCommandSpec(config);
   try {
-    exec(command, { windowsHide: true });
+    const child = spawn(cmd, args, {
+      detached: true,
+      stdio: "ignore",
+      windowsHide: true,
+    });
+    child.unref();
   } catch {
     // Silently fail
   }
 }
 
-module.exports = { play, playAsync, getCommand, getPresetNames, PRESETS, sanitizePath };
+module.exports = {
+  play,
+  playDetached,
+  playAsync: playDetached,
+  getCommandSpec,
+  getPresetNames,
+  PRESETS,
+  sanitizePath,
+};
