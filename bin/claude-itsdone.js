@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { play, playDetached, getPresetNames, sanitizePath } = require("../src/sound");
+const { play, getPresetNames, sanitizePath } = require("../src/sound");
 const config = require("../src/config");
 const installer = require("../src/installer");
 
@@ -62,8 +62,10 @@ function cmdTest() {
 
 function cmdNotify() {
   const cfg = config.load();
-  // Detached so the hook returns immediately while the sound plays
-  playDetached(cfg);
+  // Must block until the sound finishes: Claude Code kills the hook's
+  // process tree as soon as this command exits, so a detached player
+  // is terminated before it can make any sound.
+  play(cfg);
 }
 
 function cmdStatus() {

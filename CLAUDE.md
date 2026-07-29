@@ -14,7 +14,7 @@ Sound notification tool for Claude Code. Plays a sound when Claude Code needs hu
 
 - Zero dependencies — only Node.js built-ins (child_process, fs, path, os)
 - Sound playback is platform-specific: PowerShell on Windows, afplay on macOS, paplay/aplay on Linux
-- Playback uses `spawn` with argument arrays (no shell string interpolation); `notify` plays detached so the hook returns immediately
+- Playback uses `spawn` with argument arrays (no shell string interpolation); `notify` plays synchronously because Claude Code kills the hook's process tree when the command exits, so detached playback never makes a sound
 - Failures are always silent — sound should never break the user's workflow
 - Hook type is `Notification`; `install --on-stop` also registers the `Stop` event
 - The installed hook command uses absolute paths to node and the bin script (no PATH dependency)

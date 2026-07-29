@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.0] - 2026-07-29
 
 ### Added
 
@@ -18,13 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `notify` now plays the sound in a detached process, so the Claude Code hook returns immediately instead of blocking until the sound finishes
 - The installed hook command uses absolute paths to Node.js and the script, so it no longer depends on `claude-itsdone` being on the hook environment's PATH
 - Sound playback uses `spawn` with argument arrays instead of shell strings
 - `uninstall` exits with code 1 on failure (was always 0)
 
 ### Fixed
 
+- `notify` plays synchronously again. An unreleased change on `main` made it play in a detached process, but Claude Code kills the hook's process tree as soon as the hook command exits, so the detached player was terminated before making any sound and notifications went silent for anyone running from `main`
 - `install`/`uninstall` no longer overwrite `~/.claude/settings.json` when it exists but contains invalid JSON; they abort with an error instead
 - Custom sound files in paths containing parentheses (e.g. `C:\Program Files (x86)\...`) are no longer rejected on Windows
 
@@ -51,5 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic Claude Code hook installation via `claude-itsdone install`
 - User configuration stored at `~/.claude-itsdone/config.json`
 
+[1.2.0]: https://github.com/GuxtavoLiu/claude-itsdone/releases/tag/v1.2.0
 [1.1.0]: https://github.com/GuxtavoLiu/claude-itsdone/releases/tag/v1.1.0
 [1.0.0]: https://github.com/GuxtavoLiu/claude-itsdone/releases/tag/v1.0.0

@@ -129,7 +129,7 @@ claude-itsdone reset
 }
 ```
 
-When Claude Code fires a `Notification` event (waiting for human input), it runs `claude-itsdone notify`, which plays the configured sound. The hook command uses absolute paths to both Node.js and the script, so it works even when the package is not on the PATH of the environment Claude Code spawns hooks from. The sound is played by a detached process, so the hook itself returns immediately.
+When Claude Code fires a `Notification` event (waiting for human input), it runs `claude-itsdone notify`, which plays the configured sound. The hook command uses absolute paths to both Node.js and the script, so it works even when the package is not on the PATH of the environment Claude Code spawns hooks from. The sound plays synchronously and the hook returns as soon as it finishes (well under a second); Claude Code kills the hook's process tree when the command exits, so a detached player would be terminated before making any sound.
 
 Before any change, your current `settings.json` is copied to `settings.json.bak`. If the file exists but is not valid JSON, `install` and `uninstall` refuse to touch it.
 
